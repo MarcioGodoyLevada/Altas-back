@@ -1,0 +1,17 @@
+import { Column, Entity, PrimaryGeneratedColumn,getRepository } from 'typeorm';
+
+@Entity('deciv')
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ type: 'varchar' })
+  name: string;
+
+  @Column({ type: 'varchar', unique: true })
+  email: string;
+
+  @Column({ type: 'varchar' })
+  password: string;
+}
+
