@@ -13,5 +13,5 @@ AppDataSource.initialize().then(() => {
 
 	app.use(errorMiddleware)
 
-	return app.listen(3333)
+	return app.listen(3000)
 })
