@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
-import { BadRequestError } from '../helpers/api-erros';
-import { userRepository } from '../repositories/userRepository';
+import { BadRequestError } from '../../helpers/api-erros';
+import { userRepository } from '../../repositories/userRepository';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { User } from '../../entities/User';
 
 export class UserController {
   async create(req: Request, res: Response) {
@@ -16,11 +17,10 @@ export class UserController {
 
     const hashPassword = await bcrypt.hash(password, 10);
 
-    const newUser = userRepository.create({
-      name,
-      email,
-      password: hashPassword,
-    });
+    const newUser = new User();
+    newUser.name = name;
+    newUser.email = email;
+    newUser.password = hashPassword;
 
     await userRepository.save(newUser);
 
@@ -32,7 +32,9 @@ export class UserController {
   async login(req: Request, res: Response) {
     const { email, password } = req.body;
 
-    const user = await userRepository.findOneBy({ email });
+    const user = await userRepository.findOneBy({
+      email: email,
+    });
 
     if (!user) {
       throw new BadRequestError('E-mail ou senha inválidos');
@@ -44,14 +46,15 @@ export class UserController {
       throw new BadRequestError('E-mail ou senha inválidos');
     }
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_PASS ?? '', {
-      expiresIn: '8h',
-    });
-
-    const { password: _, ...userLogin } = user;
+    const token = jwt.sign(
+      { id: user.email },
+      '$2b$10$7Zxg2U3O2sBwXun5C08jHOb82sCebCduNctbp7LLPxMmDxG0ybHNy',
+      {
+        expiresIn: '8h',
+      }
+    );
 
     return res.json({
-      user: userLogin,
       token: token,
     });
   }
