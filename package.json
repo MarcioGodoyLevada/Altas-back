@@ -7,10 +7,10 @@
 		"dev": "nodemon --exec ts-node ./src/index.ts",
 		"migration:generate": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:generate ./src/migrations/default",
 		"migration:run": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:run",
-		"start": "ts-node-dev ./src/index.ts",
-    "production": "node ./build/index.js",
-    "postinstall": "tsc",
-    "test": "jest"
+		"postinstall": "rm -rf ./dist && tsc",
+		"production":"node ./dist/index.js",
+		"build": "rm -rf ./dist && tsc",
+		"start": "node ./dist/index.js"
 	},
 	"devDependencies": {
 		"@types/bcrypt": "^5.0.0",
